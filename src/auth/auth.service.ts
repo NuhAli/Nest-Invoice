@@ -62,7 +62,7 @@ export class AuthService {
       await this.hashRt(tokens.refresh_token, newUser.id);
       return tokens;
     } catch (e) {
-      console.log(e);
+      throw Error(e)
     }
   }
 
@@ -73,22 +73,19 @@ export class AuthService {
           email: authDto.email
         }
       });
-
-      if (!user) new ForbiddenException("Access Denied");
-
+      if (!user) throw new ForbiddenException('Access denied')
       const passwordComparison = await this.comparePassword(authDto.password, user.hash);
-
-      if (!passwordComparison) new ForbiddenException("Access Denied");
+      if (!passwordComparison) throw new ForbiddenException('Access denied')
       const tokens = await this.generateTokens(authDto.email, user.id);
       await this.hashRt(tokens.refresh_token, user.id);
       return tokens;
     } catch (e) {
-      console.log(e);
+      throw Error(e)
     }
   }
 
-  async signOut(userId: number) {
-    await this.prismaService.user.update({
+  async signOut(userId: number): Promise<void> {
+    await this.prismaService.user.updateMany({
       where: {
         id: userId,
         hashedRt: {

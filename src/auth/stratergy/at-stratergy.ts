@@ -2,7 +2,9 @@ import { PassportStrategy } from "@nestjs/passport";
 import {Strategy, ExtractJwt} from "passport-jwt";
 import { JwtPayload } from "../types";
 import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy,'jwt'){
   constructor(configService: ConfigService) {
     super({
@@ -11,7 +13,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy,'jwt'){
       });
   }
 
-  validate(payload: JwtPayload){
+  validate(payload: JwtPayload): JwtPayload{
     return payload
   }
 }

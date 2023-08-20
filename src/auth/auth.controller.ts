@@ -8,8 +8,7 @@ import { AtGuard } from "../common/guards";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {
-  }
+  constructor(private authService: AuthService) {}
 
   @Post("signup")
   @HttpCode(HttpStatus.CREATED)
@@ -18,19 +17,15 @@ export class AuthController {
   }
 
   @Post("signin")
-  @HttpCode(HttpStatus.OK)
   signIn(@Body() authDto:AuthenticationDto): Promise<Tokens> {
     return this.authService.signIn(authDto);
   }
 
+  @UseGuards(AtGuard)
   @Post("signout")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AtGuard)
-  signOut(@User() user:JwtPayload){
-    console.log(user)
+  signOut(@User() user:JwtPayload): Promise<void> {
     const {sub} = user
     return this.authService.signOut(sub)
   }
-
-
 }
